@@ -3,16 +3,18 @@ const File = 'config.json';
 const DefaultConfig = {
     themeColor: '#3b82f6' 
 };
+let colorInput;
 class Plugin extends siyuan.Plugin {
     constructor() {
         super(...arguments);
     }
     async onload() {
         this.config = await this.loadData(File) || DefaultConfig;
-        const themeColor = this.config.themeColor || DefaultConfig.themeColor;
+        const themeColor = this.config.themeColor;
         this.setThemeColor(themeColor);
     }
     onLayoutReady() {
+        if (window.siyuan.isPublish) return;
         this.addTopBar({
             icon: "iconTheme",
             title: this.i18n.QYLCustomThemeColor,
@@ -23,8 +25,8 @@ class Plugin extends siyuan.Plugin {
         });
     }
     openColorPicker() {
-        document.querySelector('.QYL-CustomThemeColor-input')?.remove();
-        const colorInput = document.createElement('input');
+        colorInput?.remove();
+        colorInput = document.createElement('input');
         colorInput.type = 'color';
         colorInput.className = 'QYL-CustomThemeColor-input';
         Object.assign(colorInput.style, {
@@ -41,7 +43,7 @@ class Plugin extends siyuan.Plugin {
             margin: '0',
             padding: '0'
         });
-        const currentColor = this.config.themeColor || '#3575f0';
+        const currentColor = this.config.themeColor;
         colorInput.value = currentColor;
         document.body.appendChild(colorInput);
         setTimeout(() => {
@@ -50,20 +52,16 @@ class Plugin extends siyuan.Plugin {
         colorInput.addEventListener('change', (e) => {
             const selectedColor = e.target.value;
             this.applyThemeColor(selectedColor);
-            if (colorInput.parentNode) {
-                colorInput.remove();
-            }
+            colorInput?.remove();
         });
         const closeHandler = (e) => {
             if (!colorInput.contains(e.target)) {
-                if (colorInput.parentNode) {
-                    colorInput.remove();
-                }
-                document.removeEventListener('click', closeHandler);
+                document.removeEventListener('click', closeHandler, true);
+                colorInput?.remove();
             }
         };
         setTimeout(() => {
-            document.addEventListener('click', closeHandler);
+            document.addEventListener('click', closeHandler, true); // 有的 click 事件会被阻止冒泡导致监听不到，需在捕获阶段监听
         }, 100);
     }
     setThemeColor(color) {
@@ -75,11 +73,11 @@ class Plugin extends siyuan.Plugin {
         this.saveData(File, this.config);
     }
     onunload() {
-        document.querySelector('.QYL-CustomThemeColor-input')?.remove();
+        colorInput?.remove();
         document.documentElement.style.removeProperty('--QYL-CustomThemeColor');
     }
     async uninstall() {
-        document.querySelector('.QYL-CustomThemeColor-input')?.remove();
+        colorInput?.remove();
         document.documentElement.style.removeProperty('--QYL-CustomThemeColor');
         await this.removeData(File);
     }
