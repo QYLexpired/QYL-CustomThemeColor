@@ -23,27 +23,52 @@ class Plugin extends siyuan.Plugin {
         });
     }
     openColorPicker() {
-        const existingPicker = document.querySelector('input[type="color"]');
+        const existingPicker = document.querySelector('.QYL-CustomThemeColor-input');
         if (existingPicker) {
             document.body.removeChild(existingPicker);
         }
         const colorInput = document.createElement('input');
         colorInput.type = 'color';
-        colorInput.style.position = 'fixed';
-        colorInput.style.top = '20px';
-        colorInput.style.right = '20px';
-        colorInput.style.zIndex = '9999';
-        colorInput.style.opacity = '0';
-        colorInput.style.pointerEvents = 'none';
+        colorInput.className = 'QYL-CustomThemeColor-input';
+        Object.assign(colorInput.style, {
+            position: 'fixed',
+            top: '50vh',
+            left: '50vw',
+            transform: 'translate(-50%, -50%)',
+            zIndex: '9999',
+            opacity: '0',
+            pointerEvents: 'none',
+            width: '1px',
+            height: '1px',
+            border: 'none',
+            outline: 'none',
+            margin: '0',
+            padding: '0'
+        });
         const currentColor = this.config.themeColor || '#3575f0';
         colorInput.value = currentColor;
         document.body.appendChild(colorInput);
-        colorInput.click();
+        setTimeout(() => {
+            colorInput.click();
+        }, 10);
         colorInput.addEventListener('change', (e) => {
             const selectedColor = e.target.value;
             this.applyThemeColor(selectedColor);
-            document.body.removeChild(colorInput);
+            if (colorInput.parentNode) {
+                document.body.removeChild(colorInput);
+            }
         });
+        const closeHandler = (e) => {
+            if (!colorInput.contains(e.target)) {
+                if (colorInput.parentNode) {
+                    document.body.removeChild(colorInput);
+                }
+                document.removeEventListener('click', closeHandler);
+            }
+        };
+        setTimeout(() => {
+            document.addEventListener('click', closeHandler);
+        }, 100);
     }
     setThemeColor(color) {
         document.documentElement.style.setProperty('--QYL-CustomThemeColor', color);
@@ -54,10 +79,19 @@ class Plugin extends siyuan.Plugin {
         this.saveData(File, this.config);
     }
     onunload() {
+        const existingPicker = document.querySelector('.QYL-CustomThemeColor-input');
+        if (existingPicker) {
+            document.body.removeChild(existingPicker);
+        }
         document.documentElement.style.removeProperty('--QYL-CustomThemeColor');
     }
-    uninstall() {
+    async uninstall() {
+        const existingPicker = document.querySelector('.QYL-CustomThemeColor-input');
+        if (existingPicker) {
+            document.body.removeChild(existingPicker);
+        }
         document.documentElement.style.removeProperty('--QYL-CustomThemeColor');
+        await this.removeData(File);
     }
 }
 module.exports = Plugin;

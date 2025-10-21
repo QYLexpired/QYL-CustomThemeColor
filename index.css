@@ -1,10 +1,10 @@
 :root {
     --QYL-theme-base: var(--QYL-CustomThemeColor, #3575f0);
     --b3-theme-primary: oklch(from var(--QYL-theme-base) min(0.67, l) c h) !important;
-    --b3-theme-primary-light: oklch(from var(--b3-theme-primary) l c h / 0.54) !important;
-    --b3-theme-primary-lighter: oklch(from var(--b3-theme-primary) l c h / 0.38) !important;
-    --b3-theme-primary-lightest: oklch(from var(--b3-theme-primary) l c h / 0.12) !important;
+    --b3-theme-primary-light: oklch(from var(--b3-theme-primary) max(0.67, l) c h / 0.54) !important;
+    --b3-theme-primary-lighter: oklch(from var(--b3-theme-primary) max(0.67, l) c h / 0.38) !important;
+    --b3-theme-primary-lightest: oklch(from var(--b3-theme-primary) max(0.67, l) c h / 0.15) !important;
     &[data-theme-mode="dark"] {
-        --b3-theme-primary: oklch(from var(--QYL-theme-base) max(0.43, l) c h) !important;
+        --b3-theme-primary: oklch(from var(--QYL-theme-base) max(0.55, l) c h) !important;
     }
 }
