@@ -23,18 +23,14 @@ class Plugin extends siyuan.Plugin {
         });
     }
     openColorPicker() {
-        const existingPicker = document.querySelector('.QYL-CustomThemeColor-input');
-        if (existingPicker) {
-            document.body.removeChild(existingPicker);
-        }
+        document.querySelector('.QYL-CustomThemeColor-input')?.remove();
         const colorInput = document.createElement('input');
         colorInput.type = 'color';
         colorInput.className = 'QYL-CustomThemeColor-input';
         Object.assign(colorInput.style, {
             position: 'fixed',
-            top: '50vh',
-            left: '50vw',
-            transform: 'translate(-50%, -50%)',
+            top: '32px',
+            right: '450px',
             zIndex: '9999',
             opacity: '0',
             pointerEvents: 'none',
@@ -55,13 +51,13 @@ class Plugin extends siyuan.Plugin {
             const selectedColor = e.target.value;
             this.applyThemeColor(selectedColor);
             if (colorInput.parentNode) {
-                document.body.removeChild(colorInput);
+                colorInput.remove();
             }
         });
         const closeHandler = (e) => {
             if (!colorInput.contains(e.target)) {
                 if (colorInput.parentNode) {
-                    document.body.removeChild(colorInput);
+                    colorInput.remove();
                 }
                 document.removeEventListener('click', closeHandler);
             }
@@ -79,17 +75,11 @@ class Plugin extends siyuan.Plugin {
         this.saveData(File, this.config);
     }
     onunload() {
-        const existingPicker = document.querySelector('.QYL-CustomThemeColor-input');
-        if (existingPicker) {
-            document.body.removeChild(existingPicker);
-        }
+        document.querySelector('.QYL-CustomThemeColor-input')?.remove();
         document.documentElement.style.removeProperty('--QYL-CustomThemeColor');
     }
     async uninstall() {
-        const existingPicker = document.querySelector('.QYL-CustomThemeColor-input');
-        if (existingPicker) {
-            document.body.removeChild(existingPicker);
-        }
+        document.querySelector('.QYL-CustomThemeColor-input')?.remove();
         document.documentElement.style.removeProperty('--QYL-CustomThemeColor');
         await this.removeData(File);
     }
